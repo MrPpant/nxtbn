@@ -13,7 +13,7 @@ class UserAdminQuery(graphene.ObjectType):
     permissions = graphene.List(PermissionType, search=graphene.String(required=True), user_id=graphene.Int(required=True))
 
     def resolve_users(self, info, **kwargs):
-        return User.objects.all()
+        return User.objects.filter(is_staff=True)
     
     def resolve_user(self, info, id):
         try:
@@ -24,7 +24,6 @@ class UserAdminQuery(graphene.ObjectType):
         return user
 
     def resolve_permissions(self, info, search, user_id):
-        print(search, user_id)
         # Get the user by the provided user_id
         try:
             user = User.objects.prefetch_related('user_permissions').get(id=user_id)
