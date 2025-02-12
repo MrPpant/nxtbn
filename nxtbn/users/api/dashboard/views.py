@@ -258,7 +258,9 @@ class UserViewSet(UserFilterMixin, viewsets.ModelViewSet):
         return UserMututionalSerializer
     
     def get_queryset(self):
-        return User.objects.exclude(role=UserRole.CUSTOMER)
+        return User.objects.filter(
+            is_staff=True,
+        )
     
     @action(detail=True, methods=['put'])
     def deactivate(self, request, pk=None):

@@ -119,12 +119,7 @@ class UserMututionalSerializer(serializers.ModelSerializer):
             'password',
             'role'
         ]
-        extra_kwargs = {
-            'is_staff': {'read_only': True},
-            'is_superuser': {'read_only': True},
-            'username': {'read_only': True}
-
-        }
+        read_only_fields = ['id', 'is_superuser', 'is_staff', 'is_active', 'role', 'username']
 
     def create(self, validated_data):
         password = validated_data.pop('password', None)

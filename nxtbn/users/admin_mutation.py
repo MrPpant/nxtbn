@@ -5,6 +5,7 @@ from django.contrib.auth.models import Permission
 from django.conf import settings
 from graphql import GraphQLError
 
+from nxtbn.core.admin_permissions import gql_store_admin_required
 from nxtbn.users.admin_types import PermissionType
 from nxtbn.users.api.storefront.serializers import JwtBasicUserSerializer
 from nxtbn.users.models import User
@@ -121,11 +122,19 @@ class TogglePermissionMutation(graphene.Mutation):
     success = graphene.Boolean()
     message = graphene.String()
 
+    @gql_store_admin_required
     def mutate(self, info, user_id, permission_codename):
         try:
             user = User.objects.get(id=user_id)
         except User.DoesNotExist:
             return TogglePermissionMutation(success=False, message="User not found")
+        
+
+        if user.is_superuser or user.is_store_admin:
+            raise GraphQLError("Superusers and store administrators have all permissions by default and their permissions cannot be modified.")
+        
+        if not user.is_active or not user.is_staff:
+            raise GraphQLError("User is not an active staff member.")
 
         try:
             permission = Permission.objects.get(codename=permission_codename)
