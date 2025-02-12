@@ -126,6 +126,10 @@ class TogglePermissionMutation(graphene.Mutation):
             user = User.objects.get(id=user_id)
         except User.DoesNotExist:
             return TogglePermissionMutation(success=False, message="User not found")
+        
+
+        if user.is_superuser or user.is_store_admin:
+            raise GraphQLError("Superusers and store administrators have all permissions by default and their permissions cannot be modified.")
 
         try:
             permission = Permission.objects.get(codename=permission_codename)
