@@ -10,7 +10,7 @@ from nxtbn.users.models import User
 class UserAdminQuery(graphene.ObjectType):
     users = DjangoFilterConnectionField(AdminUserType)
     user = graphene.Field(AdminUserType, id=graphene.Int(required=True))
-    permissions = graphene.List(PermissionType, user_id=graphene.Int(required=True))
+    permissions = graphene.List(PermissionType, search=graphene.String(required=True), user_id=graphene.Int(required=True))
 
     def resolve_users(self, info, **kwargs):
         return User.objects.all()
@@ -23,7 +23,8 @@ class UserAdminQuery(graphene.ObjectType):
         
         return user
 
-    def resolve_permissions(self, info, user_id):
+    def resolve_permissions(self, info, search, user_id):
+        print(search, user_id)
         # Get the user by the provided user_id
         try:
             user = User.objects.prefetch_related('user_permissions').get(id=user_id)
@@ -31,7 +32,7 @@ class UserAdminQuery(graphene.ObjectType):
             return []  # If the user doesn't exist, return an empty list
 
         # Retrieve all permissions from the database
-        permissions = Permission.objects.all()
+        permissions = Permission.objects.filter(name__icontains=search)
 
         # Create a set of user's permissions for quick lookup
         user_permissions = set(user.user_permissions.all())
