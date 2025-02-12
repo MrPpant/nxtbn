@@ -5,6 +5,7 @@ from django.contrib.auth.models import Permission
 from django.conf import settings
 from graphql import GraphQLError
 
+from nxtbn.core.admin_permissions import gql_store_admin_required
 from nxtbn.users.admin_types import PermissionType
 from nxtbn.users.api.storefront.serializers import JwtBasicUserSerializer
 from nxtbn.users.models import User
@@ -121,6 +122,7 @@ class TogglePermissionMutation(graphene.Mutation):
     success = graphene.Boolean()
     message = graphene.String()
 
+    @gql_store_admin_required
     def mutate(self, info, user_id, permission_codename):
         try:
             user = User.objects.get(id=user_id)
