@@ -13,7 +13,7 @@ class AdminOrderQuery(graphene.ObjectType):
     orders = DjangoFilterConnectionField(OrderType)
     order = graphene.Field(OrderType, id=graphene.Int(required=True))
     order_invoice = graphene.Field(OrderInvoiceType, order_id=graphene.Int(required=True))
-    order_invoices = DjangoFilterConnectionField(OrderInvoiceType)
+    order_invoices = graphene.List(OrderInvoiceType, order_ids=graphene.List(graphene.Int))
 
    
 
@@ -42,11 +42,17 @@ class AdminOrderQuery(graphene.ObjectType):
         return order
     
     @gql_store_admin_required
-    def resolve_order_invoices(self, info, **kwargs):
+    def resolve_order_invoices(self, info, order_ids, **kwargs):
+        if len(order_ids) > 100:
+            raise Exception("You can only query 100 orders at a time")
+        
+        if not order_ids:
+            raise Exception("You must provide order ids")
+
         order = Order.objects.select_related(
             'billing_address', 'shipping_address'
         ).prefetch_related(
             'line_items__variant'
-        ).all()
+        ).filter(id__in=order_ids)
 
         return order

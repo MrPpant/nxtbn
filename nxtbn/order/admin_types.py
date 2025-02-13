@@ -120,5 +120,3 @@ class OrderInvoiceType(DjangoObjectType):
             'reservation_status',
             'note',
         )
-        interfaces = (relay.Node,)
-        filterset_class = OrderFilter
