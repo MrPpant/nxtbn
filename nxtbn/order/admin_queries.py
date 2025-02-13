@@ -48,3 +48,5 @@ class AdminOrderQuery(graphene.ObjectType):
         ).prefetch_related(
             'line_items__variant'
         ).all()
+
+        return order

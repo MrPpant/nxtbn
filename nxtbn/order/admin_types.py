@@ -91,17 +91,11 @@ class OrderInvoiceType(DjangoObjectType):
     def resolve_humanize_total_price(self, info):
         return self.humanize_total_price()
     
-    def resolve_company_info(self, info):
-        return SiteSettings.objects.first()
-
     def resolve_items(self, info):
         return self.line_items.all()
 
     def resolve_total_price(self, info):
         return self.humanize_total_price()
-
-    def resolve_payment_method(self, info):
-        return self.get_payment_method()
     
     class Meta:
         model = Order
@@ -112,7 +106,6 @@ class OrderInvoiceType(DjangoObjectType):
             'shipping_address',
             'billing_address',
             'created_at',
-            'last_modified',
             'total_price_without_tax',
             'total_shipping_cost',
             'total_discounted_amount',
@@ -121,14 +114,11 @@ class OrderInvoiceType(DjangoObjectType):
             'currency_conversion_rate',
             'authorize_status',
             'charge_status',
-            'promo_code',
-            'gift_card',
             'payment_term',
             'due_date',
             'preferred_payment_method',
             'reservation_status',
             'note',
-            'comment',
         )
         interfaces = (relay.Node,)
         filterset_class = OrderFilter
