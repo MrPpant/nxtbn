@@ -13,7 +13,8 @@ class AdminCoreQuery(graphene.ObjectType):
     currency_exchanges = DjangoFilterConnectionField(CurrencyExchangeType)
     currency_exchange = graphene.Field(CurrencyExchangeType, id=graphene.ID(required=True))
     allowed_currency_list = graphene.List(AdminCurrencyTypesEnum)
-    default_invoice_settings = graphene.Field(InvoiceSettingsType)
+    invoice_setting = graphene.Field(InvoiceSettingsType, invoice_settings_id=graphene.ID(required=False))
+    invoice_settings = DjangoFilterConnectionField(InvoiceSettingsType)
 
     @gql_store_admin_required
     def resolve_currency_exchanges(self, info, **kwargs):
@@ -39,6 +40,11 @@ class AdminCoreQuery(graphene.ObjectType):
         ]
     
     @gql_store_admin_required
-    def resolve_default_invoice_settings(self, info):
-        site_id = getattr(settings, 'SITE_ID', 1)
-        return InvoiceSettings.objects.get(site__id=site_id)
+    def resolve_invoice_setting(self,  info, invoice_settings_id=None, **kwargs):
+        if not invoice_settings_id:
+            return InvoiceSettings.objects.get(is_default=True)
+        return InvoiceSettings.objects.get(id=invoice_settings_id)
+    
+    @gql_store_admin_required
+    def resolve_invoice_settings(self, info, **kwargs):
+        return InvoiceSettings.objects.all()

@@ -27,7 +27,7 @@ from rest_framework import serializers
 
 from nxtbn.core import LanguageChoices
 from nxtbn.core.admin_permissions import GranularPermission, IsStoreAdmin, IsStoreStaff
-from nxtbn.core.api.dashboard.serializers import InvoiceSettingsSerializer, SiteSettingsSerializer
+from nxtbn.core.api.dashboard.serializers import InvoiceSettingsLogoSerializer, InvoiceSettingsSerializer, SiteSettingsSerializer
 from nxtbn.core.models import InvoiceSettings, SiteSettings
 from nxtbn.users import UserRole
 
@@ -54,16 +54,19 @@ class InvoiceSettingsView(generics.RetrieveUpdateAPIView):
     permission_classes = (IsStoreAdmin,)
     queryset = InvoiceSettings.objects.all()
     serializer_class = InvoiceSettingsSerializer
-
-
-
-    def get_object(self):
-        current_site = get_current_site(self.request)
-        try:
-            return InvoiceSettings.objects.get(site=current_site)
-        except InvoiceSettings.DoesNotExist:
-            raise NotFound("Site settings for the current site do not exist.")
+    lookup_field = 'pk'
         
+
+
+class InvoiceSettingsLogoUploadAPIView(generics.UpdateAPIView):
+    permission_classes = (IsStoreAdmin,)
+    queryset = InvoiceSettings.objects.all()
+    serializer_class = InvoiceSettingsLogoSerializer
+    lookup_field = 'id'
+
+    def partial_update(self, request, *args, **kwargs):
+        kwargs['partial'] = True
+        return self.update(request, *args, **kwargs)
 
 
 class LanguageChoicesAPIView(APIView):

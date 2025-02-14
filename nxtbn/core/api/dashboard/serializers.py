@@ -23,6 +23,13 @@ class InvoiceSettingsSerializer(serializers.ModelSerializer):
             'country',
             'postal_code',
             'contact_email',
+            'is_default',
         ]
 
     
+
+class InvoiceSettingsLogoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = InvoiceSettings
+        fields = ['id', 'logo']
+        read_only_fields = ['id']

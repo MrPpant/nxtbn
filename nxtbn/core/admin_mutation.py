@@ -3,8 +3,8 @@ import graphene
 
 from nxtbn.core import CurrencyTypes
 from nxtbn.core.admin_permissions import gql_required_perm
-from nxtbn.core.admin_types import CurrencyExchangeType
-from nxtbn.core.models import CurrencyExchange
+from nxtbn.core.admin_types import CurrencyExchangeType, InvoiceSettingsInput, InvoiceSettingsType
+from nxtbn.core.models import CurrencyExchange, InvoiceSettings
 from nxtbn.users import UserRole
 
 class CurrencyExchangeInput(graphene.InputObjectType):
@@ -77,9 +77,33 @@ class DeleteCurrencyExchange(graphene.Mutation):
 
         currency_exchange.delete()  # Delete the record
         return DeleteCurrencyExchange(success=True)  # Return success
+    
+
+
+class CreateInvoiceSettings(graphene.Mutation):
+    class Arguments:
+        input = InvoiceSettingsInput()
+
+    invoice_settings = graphene.Field(InvoiceSettingsType)
+
+    @gql_required_perm(InvoiceSettings, 'add_invoicesettings')
+    @staticmethod
+    def mutate(root, info, input):
+        invoice_settings = InvoiceSettings.objects.create(
+            store_name=input.store_name,
+            store_address=input.store_address,
+            city=input.city,
+            country=input.country,
+            postal_code=input.postal_code,
+            contact_email=input.contact_email,
+            contact_phone=input.contact_phone,
+            is_default=input.is_default,
+        )
+        return CreateInvoiceSettings(invoice_settings=invoice_settings)
 
 
 class CoreMutation(graphene.ObjectType):
     update_exchange_rate = UpdateCurrencyExchange.Field()
     create_exchange_rate = CreateCurrencyExchange.Field()
-    delete_exchange_rate = DeleteCurrencyExchange.Field() 
+    delete_exchange_rate = DeleteCurrencyExchange.Field()
+    create_invoice_settings = CreateInvoiceSettings.Field()

@@ -87,6 +87,10 @@ class OrderInvoiceType(DjangoObjectType):
     humanize_total_price = graphene.String()
     items = graphene.List(OrderInvoiceLineItemType)
     total_price = graphene.String()
+    total_tax = graphene.String()
+    total_shipping_cost = graphene.String()
+    total_price_without_tax = graphene.String()
+    total_discounted_amount = graphene.String()
 
     def resolve_humanize_total_price(self, info):
         return self.humanize_total_price()
@@ -97,6 +101,18 @@ class OrderInvoiceType(DjangoObjectType):
     def resolve_total_price(self, info):
         return self.humanize_total_price()
     
+    def resolve_total_tax(self, info):
+        return self.humanize_total_tax()
+    
+    def resolve_total_shipping_cost(self, info):
+        return self.humanize_total_shipping_cost()
+    
+    def resolve_total_price_without_tax(self, info):
+        return self.humanize_total_tax()
+    
+    def resolve_total_discounted_amount(self, info):
+        return self.humanize_total_discounted_amount()
+    
     class Meta:
         model = Order
         fields = (
@@ -106,10 +122,6 @@ class OrderInvoiceType(DjangoObjectType):
             'shipping_address',
             'billing_address',
             'created_at',
-            'total_price_without_tax',
-            'total_shipping_cost',
-            'total_discounted_amount',
-            'total_tax',
             'customer_currency',
             'currency_conversion_rate',
             'authorize_status',
