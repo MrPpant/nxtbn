@@ -20,6 +20,12 @@ class CurrencyExchangeType(DjangoObjectType):
 
 class InvoiceSettingsType(DjangoObjectType):
     db_id = graphene.ID(source='id')
+    logo = graphene.String()
+
+    def resolve_logo(self, info):
+        if self.logo:
+            return info.context.build_absolute_uri(self.logo.url)
+        return None
     class Meta:
         model = InvoiceSettings
         fields = "__all__"
@@ -27,6 +33,18 @@ class InvoiceSettingsType(DjangoObjectType):
         filter_fields = {
             'store_name': ['exact', 'icontains'],
         }
+
+
+class InvoiceSettingsInput(graphene.InputObjectType):
+    store_name = graphene.String()
+    store_address = graphene.String()
+    city = graphene.String()
+    country = graphene.String()
+    postal_code = graphene.String()
+    contact_email = graphene.String()
+    contact_phone = graphene.String()
+    is_default = graphene.Boolean()
+
 
 class AdminCurrencyTypesEnum(graphene.ObjectType):
     value = graphene.String()

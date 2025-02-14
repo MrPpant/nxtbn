@@ -27,3 +27,9 @@ class InvoiceSettingsSerializer(serializers.ModelSerializer):
         ]
 
     
+
+class InvoiceSettingsLogoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = InvoiceSettings
+        fields = ['id', 'logo']
+        read_only_fields = ['id']
