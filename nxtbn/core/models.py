@@ -172,14 +172,6 @@ class InvoiceSettings(models.Model): # This info will be seen in the invoice
     contact_phone = models.CharField(max_length=20, blank=True, null=True, help_text="Contact phone number for site administrators.")
     is_default = models.BooleanField(default=False, help_text="If this is the default invoice settings.")
 
-    def save(self, *args, **kwargs):
-        if self.is_default:
-            InvoiceSettings.objects.filter(is_default=True).update(is_default=False)
-        else:
-            if not InvoiceSettings.objects.filter(is_default=True).exists():
-                raise ValidationError("There must be at least one default invoice setting.")
-        super().save(*args, **kwargs)
-
 
 
 

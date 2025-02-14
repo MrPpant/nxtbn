@@ -42,7 +42,10 @@ class AdminCoreQuery(graphene.ObjectType):
     @gql_store_admin_required
     def resolve_invoice_setting(self,  info, invoice_settings_id=None, **kwargs):
         if not invoice_settings_id:
-            return InvoiceSettings.objects.get(is_default=True)
+            try:
+                return InvoiceSettings.objects.get(is_default=True)
+            except InvoiceSettings.DoesNotExist:
+                raise GraphQLError("Default Invoice Settings not found.")
         return InvoiceSettings.objects.get(id=invoice_settings_id)
     
     @gql_store_admin_required
