@@ -23,6 +23,7 @@ class InvoiceSettingsSerializer(serializers.ModelSerializer):
             'country',
             'postal_code',
             'contact_email',
+            'is_default',
         ]
 
     

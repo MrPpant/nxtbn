@@ -54,15 +54,7 @@ class InvoiceSettingsView(generics.RetrieveUpdateAPIView):
     permission_classes = (IsStoreAdmin,)
     queryset = InvoiceSettings.objects.all()
     serializer_class = InvoiceSettingsSerializer
-
-
-
-    def get_object(self):
-        current_site = get_current_site(self.request)
-        try:
-            return InvoiceSettings.objects.get(site=current_site)
-        except InvoiceSettings.DoesNotExist:
-            raise NotFound("Site settings for the current site do not exist.")
+    lookup_field = 'pk'
         
 
 

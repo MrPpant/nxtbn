@@ -23,6 +23,10 @@ class InvoiceSettingsType(DjangoObjectType):
     class Meta:
         model = InvoiceSettings
         fields = "__all__"
+        interfaces = (relay.Node,)
+        filter_fields = {
+            'store_name': ['exact', 'icontains'],
+        }
 
 class AdminCurrencyTypesEnum(graphene.ObjectType):
     value = graphene.String()

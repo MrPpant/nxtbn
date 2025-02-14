@@ -37,6 +37,7 @@ def create_default_site_settings(sender, **kwargs):
             country="Default Country",
             postal_code="123456",
             contact_email="invoice@example.com",
+            is_default=True,
         )
 
     if Warehouse.objects.count() == 0:
