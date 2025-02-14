@@ -162,7 +162,6 @@ class SiteSettings(models.Model):
         verbose_name_plural = "Site Settings"
 
 class InvoiceSettings(models.Model): # This info will be seen in the invoice
-    site = models.OneToOneField(Site, on_delete=models.CASCADE, null=True, blank=True, help_text="The site this configuration applies to.")
     store_name = models.CharField(max_length=100, blank=True, null=True, help_text="Name of the store.")
     store_address = models.TextField(blank=True, null=True, help_text="Physical address of the store.")
     city = models.CharField(max_length=100, blank=True, null=True, help_text="City of the store.")
@@ -171,6 +170,15 @@ class InvoiceSettings(models.Model): # This info will be seen in the invoice
     logo = models.ImageField(upload_to='logos/', blank=True, null=True, help_text="Logo of the site.")
     contact_email = models.EmailField(blank=True, null=True, help_text="Contact email for site administrators.")
     contact_phone = models.CharField(max_length=20, blank=True, null=True, help_text="Contact phone number for site administrators.")
+    is_default = models.BooleanField(default=False, help_text="If this is the default invoice settings.")
+
+    def save(self, *args, **kwargs):
+        if self.is_default:
+            InvoiceSettings.objects.filter(is_default=True).update(is_default=False)
+        else:
+            if not InvoiceSettings.objects.filter(is_default=True).exists():
+                raise ValidationError("There must be at least one default invoice setting.")
+        super().save(*args, **kwargs)
 
 
 

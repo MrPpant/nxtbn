@@ -31,7 +31,6 @@ def create_default_site_settings(sender, **kwargs):
         )
         
         InvoiceSettings.objects.create(
-            site=site,
             store_name="nxtbn commerce",
             store_address="Default Store Address",
             city="Default City",
