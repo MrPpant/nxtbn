@@ -2,7 +2,7 @@ import graphene
 import graphene
 from graphql import GraphQLError
 from nxtbn.order import OrderStatus
-from nxtbn.order.models import OrderLineItem, Order
+from nxtbn.order.models import OrderLineItem, Order, OrderStockReservationStatus
 
 class DeleteLineItems(graphene.Mutation):
     class Arguments:
@@ -20,6 +20,11 @@ class DeleteLineItems(graphene.Mutation):
 
         if not line_items.exists():
             raise GraphQLError("No matching line items found.")
+        
+        if order.reservation_status == OrderStockReservationStatus.RESERVED:
+            for line_item in line_items:
+                line_item.product.stock += line_item.quantity
+                line_item.product.save()
 
         # Get the count before deleting
         count = line_items.count()
