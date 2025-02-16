@@ -158,6 +158,7 @@ class OrderDetailsSerializer(serializers.ModelSerializer):
             'total_paid_amount',
             'device_meta',
             'reservation_status',
+            'comment',
         )
 
     def get_total_price(self, obj):

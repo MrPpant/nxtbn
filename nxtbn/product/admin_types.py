@@ -108,6 +108,10 @@ class SupplierType(DjangoObjectType):
 class ProductVariantAdminType(DjangoObjectType):
     db_id = graphene.Int(source="id")
     display_name = graphene.String()
+    humanize_price = graphene.String()
+
+    def resolve_humanize_price(self, info):
+        return self.humanize_total_price()
     class Meta:
         model = ProductVariant
         fields = (

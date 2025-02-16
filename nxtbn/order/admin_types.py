@@ -3,7 +3,7 @@ import graphene
 from graphene_django import DjangoObjectType
 from graphene import relay
 from nxtbn.core.models import SiteSettings
-from nxtbn.order.models import Address, Order, OrderLineItem
+from nxtbn.order.models import Address, Order, OrderDeviceMeta, OrderLineItem
 
 from nxtbn.order.admin_filters import OrderFilter
 
@@ -25,12 +25,78 @@ class AddressGraphType(DjangoObjectType):
         )
 
 
-class OrderType(DjangoObjectType):
+class OrderLineItemsType(DjangoObjectType):
     db_id = graphene.Int(source='id')
     humanize_total_price = graphene.String()
+    humanize_price_per_unit = graphene.String()
 
     def resolve_humanize_total_price(self, info):
         return self.humanize_total_price()
+    
+    def resolve_humanize_price_per_unit(self, info):
+        return self.humanize_price_per_unit()
+    class Meta:
+        model = OrderLineItem
+        fields = (
+            'id',
+            'quantity',
+            'variant',
+            'total_price',
+            'price_per_unit',
+        )
+
+class OrderType(DjangoObjectType):
+    db_id = graphene.Int(source='id')
+    humanize_total_price = graphene.String()
+    line_items  = graphene.List(OrderLineItemsType)
+    overcharged_amount = graphene.String()
+    is_overdue = graphene.Boolean()
+    payment_method = graphene.String()
+    humanize_total_price = graphene.String()
+    humanize_total_shipping_cost = graphene.String()
+    humanize_total_discounted_amount = graphene.String()
+    humanize_total_tax = graphene.String()
+    humanize_total_paid_amount = graphene.String()
+    due = graphene.String()
+    total_price_without_symbol = graphene.String()
+
+    def resolve_total_price_without_symbol(self, info):
+        return self.humanize_total_price(locale='')
+
+    def resolve_humanize_total_price(self, info):
+        return self.humanize_total_price()
+    
+    def resolve_line_items(self, info):
+        return self.line_items.all()
+    
+    def resolve_overcharged_amount(self, info):
+        return self.get_overcharged_amount()
+    
+    def resolve_is_overdue(self, info):
+        return self.is_overdue()
+    
+    def resolve_payment_method(self, info):
+        return self.get_payment_method()
+    
+    def resolve_humanize_total_price(self, info):
+        return self.humanize_total_price()
+    
+    def resolve_humanize_total_shipping_cost(self, info):
+        return self.humanize_total_shipping_cost()
+    
+    def resolve_humanize_total_discounted_amount(self, info):
+        return self.humanize_total_discounted_amount()
+    
+    def resolve_humanize_total_tax(self, info):
+        return self.humanize_total_tax()
+    
+    def resolve_humanize_total_paid_amount(self, info):
+        return self.humanize_total_paid_amount()
+    
+    def resolve_due(self, info):
+        return self.get_due()
+
+
     class Meta:
         model = Order
         fields = (
@@ -58,6 +124,8 @@ class OrderType(DjangoObjectType):
             'reservation_status',
             'note',
             'comment',
+            'user',
+            'due'
         )
         interfaces = (relay.Node,)
         filterset_class = OrderFilter
@@ -131,4 +199,24 @@ class OrderInvoiceType(DjangoObjectType):
             'preferred_payment_method',
             'reservation_status',
             'note',
+        )
+
+
+class OrderDeviceMetaType(DjangoObjectType):
+    db_id = graphene.Int(source='id')
+    class Meta:
+        model = OrderDeviceMeta
+        fields = (
+            'id',
+            'order',
+            'ip_address',
+            'user_agent',
+            'browser',
+            'browser_version',
+            'operating_system',
+            'device_type',
+        )
+        interfaces = (relay.Node,)
+        filter_fields = (
+            'order__alias',
         )
