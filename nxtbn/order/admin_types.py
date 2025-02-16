@@ -34,19 +34,27 @@ class OrderLineItemsType(DjangoObjectType):
             'quantity',
             'variant',
             'total_price',
-            'unit_price',
+            'price_per_unit',
         )
 
 class OrderType(DjangoObjectType):
     db_id = graphene.Int(source='id')
     humanize_total_price = graphene.String()
     line_items  = graphene.List(OrderLineItemsType)
+    overcharged_amount = graphene.String()
+    is_overdue = graphene.Boolean()
 
     def resolve_humanize_total_price(self, info):
         return self.humanize_total_price()
     
     def resolve_line_items(self, info):
         return self.line_items.all()
+    
+    def resolve_overcharged_amount(self, info):
+        return self.get_overcharged_amount()
+    
+    def resolve_is_overdue(self, info):
+        return self.is_overdue()
     class Meta:
         model = Order
         fields = (
@@ -74,6 +82,8 @@ class OrderType(DjangoObjectType):
             'reservation_status',
             'note',
             'comment',
+            'user',
+            'due'
         )
         interfaces = (relay.Node,)
         filterset_class = OrderFilter

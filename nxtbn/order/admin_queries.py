@@ -11,7 +11,7 @@ from nxtbn.users import UserRole
 
 class AdminOrderQuery(graphene.ObjectType):
     orders = DjangoFilterConnectionField(OrderType)
-    order = graphene.Field(OrderType, id=graphene.Int(required=True))
+    order = graphene.Field(OrderType, alias=graphene.UUID(required=True))
     order_invoice = graphene.Field(OrderInvoiceType, order_id=graphene.Int(required=True))
     order_invoices = graphene.List(OrderInvoiceType, order_ids=graphene.List(graphene.Int))
 
@@ -22,9 +22,9 @@ class AdminOrderQuery(graphene.ObjectType):
         return Order.objects.all()
     
     @gql_store_admin_required
-    def resolve_order(self, info, id):
+    def resolve_order(self, info, alias):
         try:
-            order = Order.objects.get(id=id)
+            order = Order.objects.get(alias=alias)
         except Order.DoesNotExist:
             raise Exception("Order not found")
         
