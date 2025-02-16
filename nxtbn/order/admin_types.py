@@ -25,12 +25,28 @@ class AddressGraphType(DjangoObjectType):
         )
 
 
+class OrderLineItemsType(DjangoObjectType):
+    db_id = graphene.Int(source='id')
+    class Meta:
+        model = OrderLineItem
+        fields = (
+            'id',
+            'quantity',
+            'variant',
+            'total_price',
+            'unit_price',
+        )
+
 class OrderType(DjangoObjectType):
     db_id = graphene.Int(source='id')
     humanize_total_price = graphene.String()
+    line_items  = graphene.List(OrderLineItemsType)
 
     def resolve_humanize_total_price(self, info):
         return self.humanize_total_price()
+    
+    def resolve_line_items(self, info):
+        return self.line_items.all()
     class Meta:
         model = Order
         fields = (
