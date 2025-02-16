@@ -27,6 +27,14 @@ class AddressGraphType(DjangoObjectType):
 
 class OrderLineItemsType(DjangoObjectType):
     db_id = graphene.Int(source='id')
+    humanize_total_price = graphene.String()
+    humanize_price_per_unit = graphene.String()
+
+    def resolve_humanize_total_price(self, info):
+        return self.humanize_total_price()
+    
+    def resolve_humanize_price_per_unit(self, info):
+        return self.humanize_price_per_unit()
     class Meta:
         model = OrderLineItem
         fields = (
@@ -50,7 +58,10 @@ class OrderType(DjangoObjectType):
     humanize_total_tax = graphene.String()
     humanize_total_paid_amount = graphene.String()
     due = graphene.String()
+    total_price_without_symbol = graphene.String()
 
+    def resolve_total_price_without_symbol(self, info):
+        return self.humanize_total_price(locale='')
 
     def resolve_humanize_total_price(self, info):
         return self.humanize_total_price()
