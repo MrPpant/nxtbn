@@ -43,6 +43,14 @@ class OrderType(DjangoObjectType):
     line_items  = graphene.List(OrderLineItemsType)
     overcharged_amount = graphene.String()
     is_overdue = graphene.Boolean()
+    payment_method = graphene.String()
+    humanize_total_price = graphene.String()
+    humanize_total_shipping_cost = graphene.String()
+    humanize_total_discounted_amount = graphene.String()
+    humanize_total_tax = graphene.String()
+    humanize_total_paid_amount = graphene.String()
+    due = graphene.String()
+
 
     def resolve_humanize_total_price(self, info):
         return self.humanize_total_price()
@@ -55,6 +63,29 @@ class OrderType(DjangoObjectType):
     
     def resolve_is_overdue(self, info):
         return self.is_overdue()
+    
+    def resolve_payment_method(self, info):
+        return self.get_payment_method()
+    
+    def resolve_humanize_total_price(self, info):
+        return self.humanize_total_price()
+    
+    def resolve_humanize_total_shipping_cost(self, info):
+        return self.humanize_total_shipping_cost()
+    
+    def resolve_humanize_total_discounted_amount(self, info):
+        return self.humanize_total_discounted_amount()
+    
+    def resolve_humanize_total_tax(self, info):
+        return self.humanize_total_tax()
+    
+    def resolve_humanize_total_paid_amount(self, info):
+        return self.humanize_total_paid_amount()
+    
+    def resolve_due(self, info):
+        return self.get_due()
+
+
     class Meta:
         model = Order
         fields = (
