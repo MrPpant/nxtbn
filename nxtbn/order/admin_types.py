@@ -3,7 +3,7 @@ import graphene
 from graphene_django import DjangoObjectType
 from graphene import relay
 from nxtbn.core.models import SiteSettings
-from nxtbn.order.models import Address, Order, OrderLineItem
+from nxtbn.order.models import Address, Order, OrderDeviceMeta, OrderLineItem
 
 from nxtbn.order.admin_filters import OrderFilter
 
@@ -199,4 +199,24 @@ class OrderInvoiceType(DjangoObjectType):
             'preferred_payment_method',
             'reservation_status',
             'note',
+        )
+
+
+class OrderDeviceMetaType(DjangoObjectType):
+    db_id = graphene.Int(source='id')
+    class Meta:
+        model = OrderDeviceMeta
+        fields = (
+            'id',
+            'order',
+            'ip_address',
+            'user_agent',
+            'browser',
+            'browser_version',
+            'operating_system',
+            'device_type',
+        )
+        interfaces = (relay.Node,)
+        filter_fields = (
+            'order__alias',
         )
