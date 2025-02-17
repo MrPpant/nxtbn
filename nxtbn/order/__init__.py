@@ -156,4 +156,4 @@ class OrderStockReservationStatus(models.TextChoices):
     RELEASED = 'RELEASED', _('Released')
     FAILED = 'FAILED', _('Failed')
     NOT_RESERVED = 'NOT_RESERVED', _('Not Reserved')
-    SHIPPED = 'SHIPPED', _('Shipped')
+    DISPATCHED = 'DISPATCHED', _('Dispatched')

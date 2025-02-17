@@ -127,7 +127,7 @@ def deduct_reservation_on_dispatch(order):
                     # Remove the reservation
                     reservation.delete()
 
-        order.reservation_status = OrderStockReservationStatus.SHIPPED
+        order.reservation_status = OrderStockReservationStatus.DISPATCHED
         order.save()
         return order
     
