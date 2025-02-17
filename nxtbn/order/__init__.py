@@ -32,7 +32,7 @@ class OrderStatus(models.TextChoices):
     """Defines the different stages of an order's lifecycle.
 
     - 'PENDING': Order has been placed but not yet processed.
-    - 'PROCESSING': Order is being processed and prepared for shipment.
+    - 'PACKED': Order has been processed and is has packed for shipment.
     - 'SHIPPED': Order has been shipped but not yet delivered.
     - 'DELIVERED': Order has been delivered to the customer.
     - 'CANCELLED': Order has been cancelled and will not be fulfilled.
@@ -41,7 +41,7 @@ class OrderStatus(models.TextChoices):
 
     PENDING = "PENDING", _("Pending")
     APPROVED = "APPROVED", _("Approved")
-    PROCESSING = "PROCESSING", _("Processing")
+    PACKED = "PACKED", _("Packed")
     SHIPPED = "SHIPPED", _("Shipped")
     DELIVERED = "DELIVERED", _("Delivered")
     CANCELLED = "CANCELLED", _("Cancelled")

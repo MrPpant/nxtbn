@@ -202,9 +202,9 @@ class OrderStatusUpdateSerializer(serializers.ModelSerializer):
             elif current_status not in [OrderStatus.PENDING, OrderStatus.APPROVED]:
                 raise serializers.ValidationError(_(f"{current_status.value} orders cannot be cancelled."))
         
-        if new_status == OrderStatus.PROCESSING:
+        if new_status == OrderStatus.PACKED:
             if current_status != OrderStatus.APPROVED:
-                raise serializers.ValidationError(_("Only pending orders can be started to processing."))
+                raise serializers.ValidationError(_("Only pending orders can be started for packing."))
             
         if new_status == OrderStatus.SHIPPED:
             if current_status == OrderStatus.CANCELLED:
