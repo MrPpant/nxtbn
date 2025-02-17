@@ -436,7 +436,7 @@ class OrderStatusUpdateAPIView(generics.UpdateAPIView):
             OrderStatus.SHIPPED: PermissionsEnum.CAN_SHIP_ORDER,
             OrderStatus.DELIVERED: PermissionsEnum.CAN_DELIVER_ORDER,
             OrderStatus.APPROVED: PermissionsEnum.CAN_APPROVE_ORDER,
-            OrderStatus.PROCESSING: PermissionsEnum.CAN_PROCCSS_ORDER,
+            OrderStatus.PACKED: PermissionsEnum.CAN_PACK_ORDER,
         }
 
         required_permission = permission_map.get(status)

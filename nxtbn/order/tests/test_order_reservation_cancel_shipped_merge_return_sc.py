@@ -109,7 +109,7 @@ class OrderStockReservationTest(BaseTestCase):
         # Now Ship the successfull order
         order_status_update_url = reverse('order-status-update', args=[order_less_than_stock_response_with_stock_tracking.data['order_alias']])
         approve = self.auth_client.patch(order_status_update_url, {"status": OrderStatus.APPROVED}, format='json')
-        processing = self.auth_client.patch(order_status_update_url, {"status": OrderStatus.PROCESSING}, format='json')
+        processing = self.auth_client.patch(order_status_update_url, {"status": OrderStatus.PACKED}, format='json')
         approved = self.auth_client.patch(order_status_update_url, {"status": OrderStatus.SHIPPED}, format='json')
 
         self.assertEqual(approve.status_code, status.HTTP_200_OK)
@@ -251,7 +251,7 @@ class OrderStockReservationTest(BaseTestCase):
         # Now Ship the successfull order
         order_status_update_url = reverse('order-status-update', args=[order_out_of_stock_response_with_stock_tracking_bo.data['order_alias']])
         approve = self.auth_client.patch(order_status_update_url, {"status": OrderStatus.APPROVED}, format='json')
-        processing = self.auth_client.patch(order_status_update_url, {"status": OrderStatus.PROCESSING}, format='json')
+        processing = self.auth_client.patch(order_status_update_url, {"status": OrderStatus.PACKED}, format='json')
         shipped = self.auth_client.patch(order_status_update_url, {"status": OrderStatus.SHIPPED}, format='json')
         
         self.assertEqual(approve.status_code, status.HTTP_200_OK)
@@ -385,7 +385,7 @@ class OrderStockReservationTest(BaseTestCase):
         # Now Ship the successfull order
         order_status_update_url = reverse('order-status-update', args=[order_response.data['order_alias']])
         approve = self.auth_client.patch(order_status_update_url, {"status": OrderStatus.APPROVED}, format='json')
-        processing = self.auth_client.patch(order_status_update_url, {"status": OrderStatus.PROCESSING}, format='json')
+        processing = self.auth_client.patch(order_status_update_url, {"status": OrderStatus.PACKED}, format='json')
         shipped = self.auth_client.patch(order_status_update_url, {"status": OrderStatus.SHIPPED}, format='json')
 
         self.assertEqual(approve.status_code, status.HTTP_200_OK)
