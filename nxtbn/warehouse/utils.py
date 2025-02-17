@@ -105,9 +105,15 @@ def release_stock(order):
         order.save()
         return order
 
-def deduct_reservation_on_dispatch(order):
-    if order.reservation_status != OrderStockReservationStatus.RESERVED:
-        raise ValidationError("Order stock must be reserved before dispatching.")
+def deduct_reservation_on_packed_for_dispatch(order):
+    if order.reservation_status == OrderStockReservationStatus.FAILED:
+        raise ValidationError("One or more items are not reserved. Please ensure all items are available in stock and reserved before preparing for shipment.")
+    
+    if order.reservation_status == OrderStockReservationStatus.DISPATCHED:
+        raise ValidationError("Order has already been dispatched.")
+    
+    if order.reservation_status == OrderStockReservationStatus.RELEASED:
+        raise ValidationError("Cannot dispatch an order with released stock reservations.")
 
     with transaction.atomic():
         for item in order.line_items.all():

@@ -153,7 +153,7 @@ class OrderStockReservationStatus(models.TextChoices):
         NOT_RESERVED: The stock has not been reserved for the order.
     """
     RESERVED = 'RESERVED', _('Reserved')
-    RELEASED = 'RELEASED', _('Released')
-    FAILED = 'FAILED', _('Failed')
-    NOT_RESERVED = 'NOT_RESERVED', _('Not Reserved')
+    RELEASED = 'RELEASED', _('Released') # Re-adjust stock after order is cancelled
+    FAILED = 'FAILED', _('Failed') # If failed, that is mean stock is insufficient to fulfill the order, have to fixed it before proceed
+    NOT_RESERVED = 'NOT_RESERVED', _('Not Reserved') # DO NOTHING IF NOT RESERVED, NO NEED VALIDATION
     DISPATCHED = 'DISPATCHED', _('Dispatched')
