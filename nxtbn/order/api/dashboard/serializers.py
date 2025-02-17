@@ -13,7 +13,7 @@ from nxtbn.payment.models import Payment
 from nxtbn.product.api.dashboard.serializers import ProductVariantSerializer
 from nxtbn.product.models import ProductVariant
 from nxtbn.users.models import User
-from nxtbn.warehouse.utils import deduct_reservation_on_dispatch, release_stock
+from nxtbn.warehouse.utils import deduct_reservation_on_packed_for_dispatch, release_stock
 
 class LineVariantSerializer(serializers.ModelSerializer):
     variant_thumbnail = serializers.SerializerMethodField()
@@ -200,7 +200,7 @@ class OrderStatusUpdateSerializer(serializers.ModelSerializer):
             if current_status == OrderStatus.CANCELLED:
                 raise serializers.ValidationError(_("Order is already cancelled."))
             elif current_status not in [OrderStatus.PENDING, OrderStatus.APPROVED]:
-                raise serializers.ValidationError(_(f"{current_status.value} orders cannot be cancelled."))
+                raise serializers.ValidationError(_(f"{current_status} orders cannot be cancelled."))
         
         if new_status == OrderStatus.PACKED:
             if current_status != OrderStatus.APPROVED:
@@ -228,8 +228,8 @@ class OrderStatusUpdateSerializer(serializers.ModelSerializer):
         if validated_data.get('status') == OrderStatus.CANCELLED:
             release_stock(instance)
 
-        if validated_data.get('status') == OrderStatus.SHIPPED:
-            deduct_reservation_on_dispatch(instance)
+        if validated_data.get('status') == OrderStatus.PACKED:
+            deduct_reservation_on_packed_for_dispatch(instance)
         
         return super().update(instance, validated_data)
     
