@@ -9,6 +9,7 @@ class Image(AbstractBaseModel):
     last_modified_by = models.ForeignKey(User, on_delete=models.PROTECT, related_name='image_modified', null=True, blank=True)
     name = models.CharField(max_length=255)
     image = models.ImageField()
+    image_xs = models.ImageField(null=True, blank=True)
     image_alt_text = models.CharField(max_length=255)
 
 
