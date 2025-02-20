@@ -14,6 +14,12 @@ class ProductFilter(filters.FilterSet):
     brand = filters.CharFilter(lookup_expr='icontains')
     related_to = filters.CharFilter(field_name='related_to__name', lookup_expr='icontains')
     collection = filters.ModelChoiceFilter(field_name='collections', queryset=Collection.objects.all())
+    variant_id = filters.CharFilter(field_name='variants__id', lookup_expr='exact')
+    variant_alias = filters.CharFilter(field_name='variants__alias', lookup_expr='icontains')
+    variant_sku = filters.CharFilter(field_name='variants__sku', lookup_expr='icontains')
+    variant_name = filters.CharFilter(field_name='variants__name', lookup_expr='icontains')
+    title = filters.CharFilter(field_name='name', lookup_expr='icontains')
+
 
     class Meta:
         model = Product
