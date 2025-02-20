@@ -12,12 +12,16 @@ class ProductVariantNonPaginatedType(DjangoObjectType):
     display_name = graphene.String()
     humanize_price = graphene.String()
     variant_thumbnail = graphene.String()
+    variant_thumbnail_xs = graphene.String()
 
     def resolve_humanize_price(self, info):
         return self.humanize_total_price()
     
     def resolve_variant_thumbnail(self, info):
         return self.variant_thumbnail(info.context)
+    
+    def resolve_variant_thumbnail_xs(self, info):
+        return self.variant_thumbnail_xs(info.context)
     class Meta:
         model = ProductVariant
         fields = (
@@ -46,12 +50,16 @@ class ProductGraphType(DjangoObjectType):
     db_id = graphene.Int(source="id")
     all_variants = graphene.List(ProductVariantNonPaginatedType)
     product_thumbnail = graphene.String()
+    product_thumbnail_xs = graphene.String()
 
     def resolve_all_variants(self, info):
         return self.variants.all()
     
     def resolve_product_thumbnail(self, info):
         return self.product_thumbnail(info.context)
+    
+    def resolve_product_thumbnail_xs(self, info):
+        return self.product_thumbnail_xs(info.context)
     class Meta:
         model = Product
         fields = (

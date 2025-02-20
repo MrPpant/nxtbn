@@ -221,7 +221,18 @@ class Product(PublishableModel, AbstractMetadata, AbstractSEOModel):
             full_url = request.build_absolute_uri(image_url)
             return full_url
         return None
-
+    
+    def product_thumbnail_xs(self, request):
+        """
+        Returns the URL of the first image associated with the product. 
+        If no image is available, returns None.
+        """
+        first_image = self.images.first()  # Get the first image if it exists
+        if first_image and hasattr(first_image, 'image_xs') and first_image.image_xs:
+            image_url = first_image.image_xs.url
+            full_url = request.build_absolute_uri(image_url)
+            return full_url
+        return None
 
 
     
@@ -382,6 +393,24 @@ class ProductVariant(MonetaryMixin, AbstractUUIDModel, AbstractMetadata, models.
             first_image = self.product.images.first()
             if first_image and hasattr(first_image, 'image') and first_image.image:
                 image_url = first_image.image.url
+                full_url = request.build_absolute_uri(image_url)
+                return
+        return None
+    
+    def variant_thumbnail_xs(self, request):
+        """
+        Returns the URL of the first image associated with the product variant. 
+        If no image is available, returns None.
+        """
+        if self.image and hasattr(self.image, 'image_xs') and self.image.image_xs:
+            image_url = self.image.image_xs.url
+            full_url = request.build_absolute_uri(image_url)
+            return full_url
+        
+        if self.product.images.exists():
+            first_image = self.product.images.first()
+            if first_image and hasattr(first_image, 'image_xs') and first_image.image_xs:
+                image_url = first_image.image_xs.url
                 full_url = request.build_absolute_uri(image_url)
                 return
         return None
