@@ -258,6 +258,7 @@ class Order(MonetaryMixin, AbstractBaseUUIDModel):
             (PermissionsEnum.CAN_DELIVER_ORDER, 'Can deliver order'),
             (PermissionsEnum.CAN_UPDATE_ORDER_PYMENT_TERM, 'Can update order payment term'),
             (PermissionsEnum.CAN_UPDATE_ORDER_PAYMENT_METHOD, 'Can update order payment method'),
+            (PermissionsEnum.CAN_FULLFILL_ORDER, 'Can fullfill order'), # Directly fullfill order, will not check order lifecycle
         ]
 
     def save(self, *args, **kwargs):
