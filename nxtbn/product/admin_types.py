@@ -30,6 +30,7 @@ class ProductGraphType(DjangoObjectType):
             'tags',
             'tax_class',
             'related_to',
+            'variants',
             'meta_title',
             'meta_description',
         )
