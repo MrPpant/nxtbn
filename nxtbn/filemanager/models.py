@@ -9,7 +9,22 @@ class Image(AbstractBaseModel):
     last_modified_by = models.ForeignKey(User, on_delete=models.PROTECT, related_name='image_modified', null=True, blank=True)
     name = models.CharField(max_length=255)
     image = models.ImageField()
+    image_xs = models.ImageField(null=True, blank=True)
     image_alt_text = models.CharField(max_length=255)
+
+    def get_image_url(self,request):
+        if self.image:
+            return request.build_absolute_uri(self.image.url)
+        return None
+
+    def get_image_xs_url(self,request):
+        if self.image_xs:
+            return request.build_absolute_uri(self.image_xs.url)
+        
+        if self.image:
+            return request.build_absolute_uri(self.image.url)
+
+        return None
 
 
 class Document(AbstractBaseModel):

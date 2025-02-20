@@ -404,6 +404,7 @@ if not get_env_var("MEMCACHE_LOCATION", default=""):
 # ============================
 # NXTBN Specific Configuration
 # ============================
+IMAGE_COMPRESS_MAX  = get_env_var("IMAGE_COMPRESS_MAX", default=200, var_type=int)  # in KB
 
 PLUGIN_BASE_DIR = 'nxtbn.plugins.sources'
 

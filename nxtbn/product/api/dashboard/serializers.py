@@ -84,6 +84,7 @@ class ProductVariantSerializer(serializers.ModelSerializer):
     is_default_variant = serializers.SerializerMethodField()
     product_name = serializers.SerializerMethodField()
     price = serializers.SerializerMethodField()
+    image_details = ImageSerializer(read_only=True, source='image')
 
     class Meta:
         model = ProductVariant
@@ -104,6 +105,7 @@ class ProductVariantSerializer(serializers.ModelSerializer):
             'track_inventory',
             'is_default_variant',
             'allow_backorder',
+            'image_details',
         )
 
     def get_is_default_variant(self, obj):
@@ -162,6 +164,7 @@ class VariantCreatePayloadSerializer(serializers.Serializer):
     is_default_variant = serializers.BooleanField(default=False)
     track_inventory = serializers.BooleanField(default=False)
     allow_backorder = serializers.BooleanField(default=False)
+    image = serializers.PrimaryKeyRelatedField(queryset=Image.objects.all(), required=False, allow_null=True)
     # def validate_sku(self, value):
     #     if ProductVariant.objects.filter(sku=value).exists():
     #         raise serializers.ValidationError("SKU already exists.")
