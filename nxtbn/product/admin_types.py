@@ -7,10 +7,51 @@ from graphene import relay
 from nxtbn.product.admin_filters import CategoryFilter, CategoryTranslationFilter, CollectionFilter, CollectionTranslationFilter, ProductFilter, ProductTagsFilter, ProductTranslationFilter, TagsTranslationFilter
 
 
+class ProductVariantNonPaginatedType(DjangoObjectType):
+    db_id = graphene.Int(source="id")
+    display_name = graphene.String()
+    humanize_price = graphene.String()
+    variant_thumbnail = graphene.String()
+
+    def resolve_humanize_price(self, info):
+        return self.humanize_total_price()
+    
+    def resolve_variant_thumbnail(self, info):
+        return self.variant_thumbnail(info.context)
+    class Meta:
+        model = ProductVariant
+        fields = (
+            'name',
+            'sku',
+            'track_inventory',
+            'product',
+            'price',
+            'variant_thumbnail',
+            'alias',
+        )
+
+    def resolve_display_name(self, info):
+        if self.name:
+            return self.name
+        
+        if self.sku:
+            return self.product.name + " - " + self.sku
+        
+        return self.product.name + " - " + self.sku
+
+
 
 class ProductGraphType(DjangoObjectType):
     description_html = graphene.String()
     db_id = graphene.Int(source="id")
+    all_variants = graphene.List(ProductVariantNonPaginatedType)
+    product_thumbnail = graphene.String()
+
+    def resolve_all_variants(self, info):
+        return self.variants.all()
+    
+    def resolve_product_thumbnail(self, info):
+        return self.product_thumbnail(info.context)
     class Meta:
         model = Product
         fields = (
@@ -30,8 +71,11 @@ class ProductGraphType(DjangoObjectType):
             'tags',
             'tax_class',
             'related_to',
+            'variants',
             'meta_title',
             'meta_description',
+            'all_variants',
+            'product_thumbnail',
         )
 
         interfaces = (relay.Node,)
@@ -105,13 +149,19 @@ class SupplierType(DjangoObjectType):
         interfaces = (relay.Node,)
         filter_fields = ('name',)
 
+
+
 class ProductVariantAdminType(DjangoObjectType):
     db_id = graphene.Int(source="id")
     display_name = graphene.String()
     humanize_price = graphene.String()
+    variant_thumbnail = graphene.String()
 
     def resolve_humanize_price(self, info):
         return self.humanize_total_price()
+    
+    def resolve_variant_thumbnail(self, info):
+        return self.variant_thumbnail()
     class Meta:
         model = ProductVariant
         fields = (
@@ -120,6 +170,7 @@ class ProductVariantAdminType(DjangoObjectType):
             'track_inventory',
             'product',
             'price',
+            'variant_thumbnail',
         )
         interfaces = (relay.Node,)
         filter_fields = ('name', 'sku', 'track_inventory', 'product', 'price')
