@@ -10,6 +10,7 @@ urlpatterns = [
     path('create-customer/', order_views.CreateCustomAPIView.as_view(), name='create-customer'),
     path('orders/<uuid:alias>/', order_views.OrderDetailView.as_view(), name='order-detail'),
     path('orders/status/update/<uuid:alias>/', order_views.OrderStatusUpdateAPIView.as_view(), name='order-status-update'),
+    path('orders/fulfill/<uuid:alias>/', order_views.OrderMarkAsFullfiledAPIView.as_view(), name='order-fulfillment-status-update'),
     path('orders/payment-term/update/<uuid:alias>/', order_views.OrderPaymentTermUpdateAPIView.as_view(), name='order-payment-term-update'),
     path('orders/payment-method/update/<uuid:alias>/', order_views.OrderPaymentMethodUpdateAPIView.as_view(), name='order-payment-method-update'),
     path('orders/return-request/', order_views.ReturnRequestAPIView.as_view(), name='return-request'),

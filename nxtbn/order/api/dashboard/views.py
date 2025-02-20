@@ -9,6 +9,7 @@ from rest_framework.exceptions import ValidationError
 
 from rest_framework.views import APIView
 from django.db.models import Sum, Count, F
+from django.db import transaction
 from django.db.models.functions import TruncMonth, TruncDay, TruncWeek, TruncHour
 
 from django.utils import timezone
@@ -40,6 +41,9 @@ from babel.numbers import get_currency_precision
 
 from calendar import monthrange, day_name
 from nxtbn.warehouse.utils import adjust_stocks_returned_items
+from nxtbn.warehouse.utils import deduct_reservation_on_packed_for_dispatch, release_stock
+from nxtbn.order import OrderStockReservationStatus, ReturnReceiveStatus
+
 
 
 
@@ -429,8 +433,6 @@ class OrderStatusUpdateAPIView(generics.UpdateAPIView):
         status = request.data.get('status')
         user = request.user
 
-        print(status, 'status')
-
         permission_map = {
             OrderStatus.CANCELLED: PermissionsEnum.CAN_CANCEL_ORDER,
             OrderStatus.SHIPPED: PermissionsEnum.CAN_SHIP_ORDER,
@@ -440,13 +442,41 @@ class OrderStatusUpdateAPIView(generics.UpdateAPIView):
         }
 
         required_permission = permission_map.get(status)
-        print(required_permission, 'required_permission')
         if required_permission and not has_required_perm(user, required_permission, Order):
             self.permission_denied(
                 request,
                 message=_("You do not have permission to perform this action."),
                 code='permission_denied'
             )
+
+class OrderMarkAsFullfiledAPIView(generics.GenericAPIView):
+    queryset = Order.objects.all()
+    serializer_class = OrderStatusUpdateSerializer
+    permission_classes = (GranularPermission, )
+    required_perm = PermissionsEnum.CAN_FULLFILL_ORDER
+
+    def patch(self, request, *args, **kwargs):
+        with transaction.atomic():
+            instance = Order.objects.get(alias=kwargs['alias'])
+
+            if instance.status == OrderStatus.DELIVERED:
+                raise ValidationError("Order is already marked as fulfilled.")
+            
+            if instance.status == OrderStatus.CANCELLED:
+                raise ValidationError("Cannot mark a cancelled order as fulfilled.")
+            
+            if instance.status == OrderStatus.RETURNED:
+                raise ValidationError("Cannot mark a returned order as fulfilled.")
+            
+            # Now check stock and reservation
+            if instance.reservation_status == OrderStockReservationStatus.DISPATCHED: # do nothing if already dispatched
+                pass
+            else:
+                deduct_reservation_on_packed_for_dispatch(instance)
+
+            instance.status = OrderStatus.DELIVERED
+            instance.save()
+            return Response({"message": "Order marked as fulfilled."}, status=status.HTTP_200_OK)
 
 class OrderPaymentTermUpdateAPIView(generics.UpdateAPIView):
     model = Order

@@ -387,14 +387,14 @@ class OrderStockReservationTest(BaseTestCase):
         self.assertEqual(reserved_stock, 0)
 
         # Now Ship the successfull order
-        order_status_update_url = reverse('order-status-update', args=[order_response.data['order_alias']])
-        approve = self.auth_client.patch(order_status_update_url, {"status": OrderStatus.APPROVED}, format='json')
-        processing = self.auth_client.patch(order_status_update_url, {"status": OrderStatus.PACKED}, format='json')
-        shipped = self.auth_client.patch(order_status_update_url, {"status": OrderStatus.SHIPPED}, format='json')
+        order_fullfill_url = reverse('order-fulfillment-status-update', args=[order_response.data['order_alias']])
 
-        self.assertEqual(approve.status_code, status.HTTP_200_OK)
-        self.assertEqual(processing.status_code, status.HTTP_200_OK)
-        self.assertEqual(shipped.status_code, status.HTTP_200_OK)
+
+        fullfill = self.auth_client.patch(order_fullfill_url, {}, format='json')
+        
+
+        self.assertEqual(fullfill.status_code, status.HTTP_200_OK)
+     
 
 
         # as it is shipped, reserved quantity should be 0 and stock should be 0
@@ -404,8 +404,7 @@ class OrderStockReservationTest(BaseTestCase):
         self.assertEqual(remained_stock_after_shipping, 0)
         self.assertEqual(reserved_stock_after_shipping, 0)
 
-        # mark it as delivered
-        delivered = self.auth_client.patch(order_status_update_url, {"status": OrderStatus.DELIVERED}, format='json')
+    
 
         # now try to return
         return_request_url = reverse('return-request')

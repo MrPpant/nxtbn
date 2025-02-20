@@ -72,7 +72,6 @@ def get_shipping_rate_instance(shipping_method_id, address, total_weight):
                     region__isnull=True,
                     city__isnull=True
                 ).first()
-                print(rate, 'rate for country')
                 return rate
             
         # Global
@@ -84,7 +83,6 @@ def get_shipping_rate_instance(shipping_method_id, address, total_weight):
                     region__isnull=True,
                     city__isnull=True
                 ).first()
-                print(rate, 'rate for global')
                 return rate
         else:
             raise serializers.ValidationError({"details": "We don't ship to this location."})
