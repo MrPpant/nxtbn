@@ -251,11 +251,11 @@ class OrderStockReservationTest(BaseTestCase):
         # Now Ship the successfull order
         order_status_update_url = reverse('order-status-update', args=[order_out_of_stock_response_with_stock_tracking_bo.data['order_alias']])
         approve = self.auth_client.patch(order_status_update_url, {"status": OrderStatus.APPROVED}, format='json')
-        processing = self.auth_client.patch(order_status_update_url, {"status": OrderStatus.PACKED}, format='json')
+        packed = self.auth_client.patch(order_status_update_url, {"status": OrderStatus.PACKED}, format='json')
         shipped = self.auth_client.patch(order_status_update_url, {"status": OrderStatus.SHIPPED}, format='json')
         
         self.assertEqual(approve.status_code, status.HTTP_200_OK)
-        self.assertEqual(processing.status_code, status.HTTP_200_OK)
+        self.assertEqual(packed.status_code, status.HTTP_400_BAD_REQUEST) # as order is not reserved, mean is not in stock, so packing should not be allowed
 
         self.assertEqual(shipped.status_code, status.HTTP_400_BAD_REQUEST) # as order is not reserved, it should not be shipped
 
@@ -287,6 +287,10 @@ class OrderStockReservationTest(BaseTestCase):
 
         self.assertEqual(remained_stock_without_bo, 15)
         self.assertEqual(reserved_stock_without_bo, 8)
+
+        # now pack
+        packed = self.auth_client.patch(order_status_update_url, {"status": OrderStatus.PACKED}, format='json')
+        self.assertEqual(packed.status_code, status.HTTP_200_OK) # as order is reserved, it should be packed
 
         # as enough stock is available and order is reserved, now ship the order
         shipped = self.auth_client.put(order_status_update_url, {"status": OrderStatus.SHIPPED}, format='json')

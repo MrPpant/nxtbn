@@ -213,6 +213,8 @@ class OrderStatusUpdateSerializer(serializers.ModelSerializer):
                 raise serializers.ValidationError(_("Order is already shipped or delivered."))
             if current_status == OrderStatus.RETURNED:
                 raise serializers.ValidationError(_("Returned orders cannot be re-shipped."))
+            if current_status != OrderStatus.PACKED:
+                raise serializers.ValidationError(_("Order must be packed before it can be shipped."))
             
         if new_status == OrderStatus.DELIVERED:
             if current_status == OrderStatus.CANCELLED:
