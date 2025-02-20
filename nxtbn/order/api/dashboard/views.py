@@ -429,8 +429,6 @@ class OrderStatusUpdateAPIView(generics.UpdateAPIView):
         status = request.data.get('status')
         user = request.user
 
-        print(status, 'status')
-
         permission_map = {
             OrderStatus.CANCELLED: PermissionsEnum.CAN_CANCEL_ORDER,
             OrderStatus.SHIPPED: PermissionsEnum.CAN_SHIP_ORDER,
@@ -440,7 +438,6 @@ class OrderStatusUpdateAPIView(generics.UpdateAPIView):
         }
 
         required_permission = permission_map.get(status)
-        print(required_permission, 'required_permission')
         if required_permission and not has_required_perm(user, required_permission, Order):
             self.permission_denied(
                 request,
