@@ -287,6 +287,7 @@ class ProductVariant(MonetaryMixin, AbstractUUIDModel, AbstractMetadata, models.
 
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='variants')
     name = models.CharField(max_length=255, blank=True, null=True)
+    image = models.ForeignKey(Image, null=True, blank=True, on_delete=models.SET_NULL)
 
     compare_at_price = models.DecimalField(max_digits=12, decimal_places=3, validators=[MinValueValidator(Decimal('0.01'))], null=True, blank=True) # TO DO: Handle this field which is still not used in the project.
 
@@ -369,12 +370,22 @@ class ProductVariant(MonetaryMixin, AbstractUUIDModel, AbstractMetadata, models.
     
     def variant_thumbnail(self, request):
         """
-        Returns the URL of the first image associated with the variant. 
+        Returns the URL of the first image associated with the product variant. 
         If no image is available, returns None.
         """
+        if self.image and hasattr(self.image, 'image') and self.image.image:
+            image_url = self.image.image.url
+            full_url = request.build_absolute_uri(image_url)
+            return full_url
         
         if self.product.images.exists():
-            return self.product.product_thumbnail(request)
+            first_image = self.product.images.first()
+            if first_image and hasattr(first_image, 'image') and first_image.image:
+                image_url = first_image.image.url
+                full_url = request.build_absolute_uri(image_url)
+                return
+        return None
+        
         
     def get_valid_stock(self): # stocks that available for sell
         stock_data = self.warehouse_stocks.aggregate(
