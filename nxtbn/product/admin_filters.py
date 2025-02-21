@@ -18,12 +18,27 @@ class ProductFilter(filters.FilterSet):
     variant_alias = filters.CharFilter(field_name='variants__alias', lookup_expr='icontains')
     variant_sku = filters.CharFilter(field_name='variants__sku', lookup_expr='icontains')
     variant_name = filters.CharFilter(field_name='variants__name', lookup_expr='icontains')
-    title = filters.CharFilter(field_name='name', lookup_expr='icontains')
-
 
     class Meta:
         model = Product
-        fields = ('name', 'summary', 'description', 'category', 'category_name', 'supplier', 'brand','related_to', 'search', 'collection')
+        fields = (
+            'id',
+            'alias',
+            'name', 
+            'summary', 
+            'description', 
+            'category', 
+            'category_name', 
+            'supplier', 
+            'brand', 
+            'related_to', 
+            'search', 
+            'collection', 
+            'variant_id', 
+            'variant_alias', 
+            'variant_sku', 
+            'variant_name'
+        )
 
     def filter_search(self, queryset, name, value):
         """

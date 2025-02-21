@@ -241,7 +241,7 @@ class Order(MonetaryMixin, AbstractBaseUUIDModel):
         help_text="Preferred payment method for this order. The actual payment method may differ when the order is initiated or paid."
     )
     reservation_status = models.CharField(
-        default=OrderStockReservationStatus.NOT_RESERVED,
+        default=OrderStockReservationStatus.NOT_REQUIRED,
         max_length=20,
         choices=OrderStockReservationStatus.choices
     )

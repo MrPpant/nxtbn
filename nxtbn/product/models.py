@@ -232,6 +232,12 @@ class Product(PublishableModel, AbstractMetadata, AbstractSEOModel):
             image_url = first_image.image_xs.url
             full_url = request.build_absolute_uri(image_url)
             return full_url
+        
+        if first_image and hasattr(first_image, 'image') and first_image.image:
+            image_url = first_image.image.url
+            full_url = request.build_absolute_uri(image_url)
+            return full_url
+
         return None
 
 
@@ -394,7 +400,7 @@ class ProductVariant(MonetaryMixin, AbstractUUIDModel, AbstractMetadata, models.
             if first_image and hasattr(first_image, 'image') and first_image.image:
                 image_url = first_image.image.url
                 full_url = request.build_absolute_uri(image_url)
-                return
+                return full_url
         return None
     
     def variant_thumbnail_xs(self, request):
@@ -409,10 +415,10 @@ class ProductVariant(MonetaryMixin, AbstractUUIDModel, AbstractMetadata, models.
         
         if self.product.images.exists():
             first_image = self.product.images.first()
-            if first_image and hasattr(first_image, 'image_xs') and first_image.image_xs:
-                image_url = first_image.image_xs.url
+            if first_image and hasattr(first_image, 'image') and first_image.image:
+                image_url = first_image.image.url
                 full_url = request.build_absolute_uri(image_url)
-                return
+                return full_url
         return None
         
         

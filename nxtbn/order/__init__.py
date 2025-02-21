@@ -147,13 +147,14 @@ class OrderStockReservationStatus(models.TextChoices):
     OrderReservationStatus is an enumeration of possible statuses for an order reservation.
 
     Attributes:
-        RESERVED: The stock has been reserved for the order.
-        RELEASED: The stock reservation has been released.
-        INSUFFICIENT_STOCK: The stock is insufficient to fulfill the order.
-        NOT_RESERVED: The stock has not been reserved for the order.
+        RESERVED: Stock has been reserved for the order.
+        RELEASED: Stock reservation has been released.
+        FAILED: Stock reservation has failed due to insufficient stock.
+        NOT_REQUIRED: Stock reservation is not required.
+        DISPATCHED: Stock has been dispatched for the order.
     """
     RESERVED = 'RESERVED', _('Reserved')
     RELEASED = 'RELEASED', _('Released') # Re-adjust stock after order is cancelled
     FAILED = 'FAILED', _('Failed') # If failed, that is mean stock is insufficient to fulfill the order, have to fixed it before proceed
-    NOT_RESERVED = 'NOT_RESERVED', _('Not Reserved') # DO NOTHING IF NOT RESERVED, NO NEED VALIDATION
+    NOT_REQUIRED = 'NOT_REQUIRED', _('Not Required') # DO NOTHING IF NOT REQUIRED, NO NEED VALIDATION
     DISPATCHED = 'DISPATCHED', _('Dispatched')

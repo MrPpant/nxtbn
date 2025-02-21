@@ -8,8 +8,8 @@ class Image(AbstractBaseModel):
     created_by = models.ForeignKey(User, on_delete=models.PROTECT, related_name='image_created')
     last_modified_by = models.ForeignKey(User, on_delete=models.PROTECT, related_name='image_modified', null=True, blank=True)
     name = models.CharField(max_length=255)
-    image = models.ImageField()
-    image_xs = models.ImageField(null=True, blank=True)
+    image = models.ImageField(upload_to='images/')
+    image_xs = models.ImageField(upload_to='images/xs/', null=True, blank=True)
     image_alt_text = models.CharField(max_length=255)
 
     def get_image_url(self,request):
