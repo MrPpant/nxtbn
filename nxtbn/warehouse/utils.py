@@ -106,7 +106,7 @@ def release_stock(order):
         return order
 
 def deduct_reservation_on_packed_for_dispatch(order):
-    if order.reservation_status == OrderStockReservationStatus.NOT_RESERVED: # As not reservable, nothing to do
+    if order.reservation_status == OrderStockReservationStatus.NOT_REQUIRED: # As not reservable, nothing to do
         return None
     
     if order.reservation_status == OrderStockReservationStatus.FAILED:
