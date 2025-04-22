@@ -125,8 +125,7 @@ nxtbn/plugins/sources/*
 !nxtbn/plugins/sources/nxt*/
 !nxtbn/plugins/sources/nxt*
 
-# Do not ignore the __init__.py file
-!nxtbn/plugins/sources/__init__.py
+
 
 
 
